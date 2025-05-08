@@ -125,20 +125,68 @@ void calculate() {
         printField();
     }
 }
-///----------------------------------
-int main() {
-    cout << "Поле доміно:\n";
-    printField();
-    cout << "\nУсі можливі доміно(28 пар):\n";
-    vector<pair<int, int>> my_dominoes = needed_dominoes();
-    for (const auto& domino : my_dominoes) {
-        cout << domino.first << "-" << domino.second << " ";
+void input() {
+    cout << "\nВведіть значення для клітинок з '?', де необхідно замінити на числа (0-6):\n";
+    for (int row = 0; row < 7; ++row) {
+        for (int col = 0; col < 10; ++col) {
+            if (field[row][col] == -1) {
+                int input;
+                cout << "Клітинка (" << row << "," << col << "): ";
+                cin >> input;
+                field[row][col] = input;
+                printField();
+            }
+        }
     }
-    cout << "\n\n Запуск пошуку рішень\n";
-    calculate();  
-    if (solutions == 0)
-        cout << "\n Рішень не знайдено.\n";
-    else
-        cout << "\n Всього знайдено рішень: " << solutions << "\n";
+}
+
+int main() {
+    vector<vector<int>> field2=field;
+    cout << "Поле доміно:\n";
+        printField();
+        cout << "\nУсі можливі доміно(28 пар):\n";
+        vector<pair<int, int>> my_dominoes = needed_dominoes();
+        for (const auto& domino : my_dominoes) {
+            cout << domino.first << "-" << domino.second << " ";
+        }
+    while (true) {
+        cout << "\n\nМеню:\n";
+        cout << "1. Автоматичне рішення\n";
+        cout << "2. Ручне введення значень\n";
+        cout << "3. Вихід\n";
+        cout << "Виберіть опцію: ";
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            field=field2;
+            solutions = 0; 
+            cout << "\n\nЗапуск пошуку рішень\n";
+            calculate();
+            if (solutions == 0)
+                cout << "\nРішень не знайдено.\n";
+            else
+                cout << "\nВсього знайдено рішень: " << solutions << "\n";
+        }
+        else if (choice == 2) {
+            field=field2;
+            solutions = 0;
+            input();
+            cout << "\n\nЗапуск пошуку рішень\n";
+            calculate();
+            if (solutions == 0)
+                cout << "\nРішень не знайдено.\n";
+            else
+                cout << "\nВсього знайдено рішень: " << solutions << "\n";
+        }
+        else if (choice == 3) {
+            cout << "Вихід з програми.\n";
+            break;
+        }
+        else {
+            cout << "Невірний вибір. Спробуйте ще раз.\n";
+        }
+    }
     return 0;
 }
