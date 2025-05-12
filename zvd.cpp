@@ -29,6 +29,7 @@ class DominoPazzle {
     bool usedCell[ROWS][COLS] = {};   
     bool usedDomino[7][7]= {};    
     vector<vector<int>> field;
+       
     vector<Placement> placements;
 
 public:
@@ -45,7 +46,28 @@ public:
             {  1,  2,  4,   3,  -2,  -2, 2,  4, -1, 2},
             {  3,  0,  3,   2,  -1,   6, 0,  5, 1,  1},
             { -2, -2,  6,   6,   4,   5, 6,  5, -2, -2}}
+            
     {}
+    vector<vector<int>> field2=field; 
+/* ---------------------------------------------------------------------
+   Окрема функція для виводу початкової умови
+ ---------------------------------------------------------------------*/
+    void print_field() {    
+    for ( int i = 0; i < field2.size(); ++i) {
+        for (int j = 0; j < field2[i].size(); ++j) {
+            if(field2[i][j] == -2) {
+                cout << "  ";
+            }
+            else if(field2[i][j] == -1) {
+                cout << "? ";
+            }
+            else {
+                cout << field2[i][j] << " ";
+            }
+        }
+        cout << "\n";
+    }
+}
 /* ---------------------------------------------------------------------
    Перевіряє чи елемент входить в межі поля
  ---------------------------------------------------------------------*/
@@ -199,8 +221,32 @@ public:
 };
 
 int main() {
-    DominoPazzle solver;
-    if (!solver.solve())
-        cout << "Розв'язок не знайдено\n";
+    DominoPazzle pazzle;
+    int choice;
+    do {
+        cout << "\nМеню:\n";
+        cout << "1 - Запустити розв'язок\n";
+        cout << "2 - Вивести початкове поле\n";
+        cout << "3 - Вийти\n";
+        cout << "Ваш вибір: ";
+        if(!(cin>>choice)){
+            cin.clear();
+        }
+        switch(choice) {
+            case 1: {
+                if(!pazzle.solve())
+                    cout << "Розв'язок не знайдено\n";
+                break;
+            }
+            case 2:
+                pazzle.print_field();
+                break;
+            case 3:
+                cout << "Вихід з програми.\n";
+                break;
+            default:
+                cout << "Неправильний вибір. Спробуйте ще раз.\n";
+        }
+    } while(choice!=3);
     return 0;
 }
