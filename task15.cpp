@@ -2,6 +2,7 @@
  Заголовок: Головоломка з доміно
  Студент:  Джулай Макар Олександрович
  Група:    ТВ-41
+ Номер завдання: №15
  Опис програми: Мета програми в тому щоб вона розподіляла на заданому по умові полю
                 доміно(там де нема чисел треба їх вставити),суть задачі полягає в тому
                 щоб програма заповнила все поле,і кожне доміно (від 0-6) повинно попадитись
@@ -10,34 +11,33 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#define border -2
+#define BORDER -2
+#define ROWS 7
+#define COLS 10
+#define ROUTE 2
 using namespace std;
 /* ---------------------------------------------------------------------
     Структура Placement яка містить значення доміно(координати обох клітинок(row та col) 
     та значення в них(value))
  ---------------------------------------------------------------------*/
 struct Placement {
-    int row0, col0, row1, col1;
-    int value0, value1;
+    int row_0, col_0, row_1, col_1; ///row0-col0-координати першого елемента доміно,row1-col1-координати другого елемента
+    int value_0, value_1; ///значення для першого та другого елемента доміно
 };
 /* ---------------------------------------------------------------------
-    Класс DominoPazzle-реалізує роботу нашої програми
+    Класс Domino_pazzle-реалізує роботу нашої програми
  ---------------------------------------------------------------------*/
-class DominoPazzle {
-    static const int ROWS = 7;
-    static const int COLS = 10;
+class Domino_pazzle {
     bool usedCell[ROWS][COLS] = {};   
     bool usedDomino[7][7]= {};    
     vector<vector<int>> field;
-       
     vector<Placement> placements;
-
 public:
 /* ---------------------------------------------------------------------
    Тут оголошено конструктор класу DominoPazzle,і одразу в списку ініціалізації
    задається початкове значення для поля-члена field.
  ---------------------------------------------------------------------*/
-    DominoPazzle()
+    Domino_pazzle()
         : field{
             { -2,  0,  0,  1,  0,  -1,  0,  1, 5, -2},
             {  1,  6,  3,  3,  2,   1,  4,  3, 2,  6},
@@ -53,8 +53,8 @@ public:
    Окрема функція для виводу початкової умови
  ---------------------------------------------------------------------*/
     void print_field() {    
-    for ( int i = 0; i < field2.size(); ++i) {
-        for (int j = 0; j < field2[i].size(); ++j) {
+    for ( int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < COLS; ++j) {
             if(field2[i][j] == -2) {
                 cout << "  ";
             }
@@ -72,7 +72,7 @@ public:
    Перевіряє чи елемент входить в межі поля
  ---------------------------------------------------------------------*/
     bool valid(int r, int c) {
-    return r >= 0 && r < ROWS && c >= 0 && c < COLS && field[r][c] != border;
+    return r >= 0 && r < ROWS && c >= 0 && c < COLS && field[r][c] != BORDER;
 }
 /* ---------------------------------------------------------------------
    Ця функція перевіряє, чи можна в даний момент покласти одну кістку доміно (зі значеннями domino0 та domino1)
@@ -81,7 +81,7 @@ public:
    -Клітинки сусідні
    -Значення в клітинках відповідають кінцям доміно
  ---------------------------------------------------------------------*/
-    bool canBeDomino(int row1, int col1, int row2, int col2, int domino0, int domino1) {
+    bool can_be_domino(int row1, int col1, int row2, int col2, int domino0, int domino1) {
         if (!valid(row1, col1) || !valid(row2, col2)) return false;
         if (!((row1==row2 && abs(col1-col2)==1)||(col1==col2 && abs(row1-row2)==1))) return false;
         int f1 = field[row1][col1], f2 = field[row2][col2];
@@ -94,18 +94,18 @@ public:
     /* ---------------------------------------------------------------------
    Виводить наше поле в коректній формі(з'єднує пари чисел в доміно щоб користувачу було наглядно видно роботу програми)
  ---------------------------------------------------------------------*/
-    void printFieldWithDominoConnections() {
+    void print_field_with_domino_connections() {
         vector<vector<bool>> horiz(ROWS, vector<bool>(COLS,false));
         vector<vector<bool>> vert (ROWS, vector<bool>(COLS,false));
 
         for (auto &p : placements) {
-        if (p.row0 == p.row1) {
-            int r = p.row0;
-            int c = min(p.col0, p.col1);
+        if (p.row_0 == p.row_1) {
+            int r = p.row_0;
+            int c = min(p.col_0, p.col_1);
             horiz[r][c] = true;
         } else {
-            int r = min(p.row0, p.row1);
-            int c = p.col0;
+            int r = min(p.row_0, p.row_1);
+            int c = p.col_0;
             vert[r][c] = true;
         }
     }
@@ -113,7 +113,7 @@ public:
     for (int r = 0; r < ROWS; ++r) {
         for (int c = 0; c < COLS; ++c) {
             int v = field[r][c];
-            if (v == border) {
+            if (v == BORDER) {
                 cout << "   ";
             } else {
                 cout << ' ' << v << ' ';
@@ -128,7 +128,7 @@ public:
 
         if (r + 1 < ROWS) {
             for (int c = 0; c < COLS; ++c) {
-                if (field[r][c] == border) {
+                if (field[r][c] == BORDER) {
                     cout << "   ";
                 } else {
                     if (vert[r][c]) cout << " | ";
@@ -148,8 +148,8 @@ public:
         for (int r = 0; r < ROWS; ++r) {
             for (int c = 0; c < COLS; ++c) {
                 if (!valid(r,c) || usedCell[r][c]) continue;
-                static const int dr[2] = {0,1}, dc[2] = {1,0};
-                for (int d = 0; d < 2; ++d) {
+                static const int dr[ROUTE] = {0,1}, dc[ROUTE] = {1,0};
+                for (int d = 0; d < ROUTE; ++d) {
                     int r2 = r + dr[d], c2 = c + dc[d];
                     if (!valid(r2,c2) || usedCell[r2][c2]) continue;
 
@@ -173,7 +173,7 @@ public:
                            }
                     for (auto [d0,d1] : choices) {
                         if (usedDomino[d0][d1]) continue;
-                        if (!canBeDomino(r,c,r2,c2,d0,d1)) continue;
+                        if (!can_be_domino(r,c,r2,c2,d0,d1)) continue;
 
                         int prev1 = field[r][c], prev2 = field[r2][c2];
                         if (field[r][c] == -1) {
@@ -209,19 +209,19 @@ public:
             }
         }
         cout << "\n=== Перше рішення ===\n\n";
-        printFieldWithDominoConnections();
+        print_field_with_domino_connections();
         cout << "\nСписок доміно:\n";
         for (auto &p : placements) {
-            cout << "("<<p.row0<<" "<<p.col0<<")="<<p.value0
+            cout << "("<<p.row_0<<" "<<p.col_0<<")="<<p.value_0
                  <<" <-> "
-                 <<"("<<p.row1<<" "<<p.col1<<")="<<p.value1<<"\n";
+                 <<"("<<p.row_1<<" "<<p.col_1<<")="<<p.value_1<<"\n";
         }
         return true;
     }
 };
 
 int main() {
-    DominoPazzle pazzle;
+    Domino_pazzle pazzle;
     int choice;
     do {
         cout << "\nМеню:\n";
@@ -236,8 +236,7 @@ int main() {
             case 1: {
                 if(!pazzle.solve())
                     cout << "Розв'язок не знайдено\n";
-                break;
-            }
+                break;}
             case 2:
                 pazzle.print_field();
                 break;
