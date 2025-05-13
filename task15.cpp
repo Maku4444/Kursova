@@ -84,15 +84,15 @@ public:
    -Клітинки сусідні
    -Значення в клітинках відповідають кінцям доміно
  ---------------------------------------------------------------------*/
-    bool can_be_domino(int row1, int col1, int row2, int col2, int domino0, int domino1) {
-        if (!valid(row1, col1) || !valid(row2, col2)) return false;
-        if (!((row1==row2 && abs(col1-col2)==1)||(col1==col2 && abs(row1-row2)==1))) return false;
-        int f1 = field[row1][col1], f2 = field[row2][col2];
+    bool can_be_domino(int row_1, int col_1, int row_2, int col_2, int domino_0, int domino_1) {
+        if (!valid(row_1, col_1) || !valid(row_2, col_2)) return false;
+        if (!((row_1==row_2 && abs(col_1-col_2)==1)||(col_1==col_2 && abs(row_1-row_2)==1))) return false;
+        int f1 = field[row_1][col_1], f2 = field[row_2][col_2];
         return (f1==-1 && f2==-1) ||
-               (f1==-1 && (f2==domino0||f2==domino1)) ||
-               (f2==-1 && (f1==domino0||f1==domino1)) ||
-               (f1==domino0 && f2==domino1) ||
-               (f1==domino1 && f2==domino0);
+               (f1==-1 && (f2==domino_0||f2==domino_1)) ||
+               (f2==-1 && (f1==domino_0||f1==domino_1)) ||
+               (f1==domino_0 && f2==domino_1) ||
+               (f1==domino_1 && f2==domino_0);
     }
     /* ---------------------------------------------------------------------
    Виводить наше поле в коректній формі(з'єднує пари чисел в доміно щоб користувачу було наглядно видно роботу програми)
@@ -163,17 +163,22 @@ public:
                     }
                     else if (v1==-1 && v2==-1) {
                         for (int i = 0; i <= 6; ++i)
-                            for (int j = i; j <= 6; ++j)
+                            for (int j = i; j <= 6; ++j){
                                 choices.emplace_back(i,j);
+                            }
                     }
                     else {
                         int known;
-                        if (v1 != -1) {known = v1;} 
-                        else {known = v2;}
+                        if (v1 != -1){
+                            known = v1;
+                        } 
+                        else {
+                            known = v2;
+                        }
                         for (int x = 0; x <= 6; ++x) {
                             choices.emplace_back(min(known, x), max(known, x));
                         }
-                           }
+                    }
                     for (auto [d0,d1] : choices) {
                         if (usedDomino[d0][d1]) continue;
                         if (!can_be_domino(r,c,r2,c2,d0,d1)) continue;
@@ -182,7 +187,8 @@ public:
                         if (field[r][c] == -1) {
                           if (prev2 == -1 || prev2 == d1) {
                             field[r][c] = d0;
-                        } else {
+                        } 
+                        else {
                             field[r][c] = d1;
                         }
                        }
