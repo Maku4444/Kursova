@@ -253,6 +253,8 @@ int main() {
         cout << "Ваш вибір: ";
         if(!(cin>>choice)){
             cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); /// Ігнорування всіх не чисельних символів
+            cout << "Невірний ввід. Введіть число (1, 2 або 3): ";
         }
         switch(choice) {
             case 1: {
