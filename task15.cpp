@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <iomanip>
 #define BORDER -2
 #define ROWS 7
 #define COLS 10
@@ -102,7 +103,7 @@ void input() {
             for (int col = 0; col < COLS; ++col) {
                 if (field[row][col] == -1) {
                     int input;
-                    cout << "Клітинка (" << row << "," << col << "): ";
+                    cout << "Клітинка (" << row << "-" << col << "): ";
                     while (!(cin >> input) || input < 0 || input > 6) {
                         cin.clear();
                         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -246,7 +247,7 @@ void input() {
                         usedCell[r][c]     = true;
                         usedCell[r2][c2]   = true;
                         usedDomino[d0][d1] = true;
-                        placements.push_back({r,c,r2,c2,d0,d1});
+                        placements.push_back({r, c, r2, c2, field[r][c], field[r2][c2]});
 
                         if (solve()) return true;
                         placements.pop_back();
@@ -260,13 +261,13 @@ void input() {
                 return false;
             }
         }
-        cout << "\n=== Перше рішення ===\n\n";
+        cout <<"\n"<<setw(40)<<"=== Рішення ===\n\n";
         print_field_with_domino_connections();
         cout << "\nСписок доміно:\n";
         for (auto &p : placements) {
-            cout << "("<<p.row_0<<" "<<p.col_0<<")="<<p.value_0
+            cout << "("<<p.row_0<<"-"<<p.col_0<<")="<<p.value_0
                  <<" <-> "
-                 <<"("<<p.row_1<<" "<<p.col_1<<")="<<p.value_1<<"\n";
+                 <<"("<<p.row_1<<"-"<<p.col_1<<")="<<p.value_1<<"\n";
         }
         return true;
     }
